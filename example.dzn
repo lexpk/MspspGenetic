@@ -1,0 +1,41 @@
+% example
+
+mint = 8;
+maxt = 13;
+
+nActs = 6;
+dur = [0,2,5,3,3,0];
+
+nSkills = 3;
+sreq = [| 0,0,0,
+	| 1,1,1,
+	| 2,0,1,
+	| 1,0,0,
+	| 0,1,0,
+	| 0,0,0, |];
+
+nResources = 4;
+mastery = [| false,true,true,
+	| true,false,true,
+	| true,false,false,
+	| true,false,true, |];
+
+nPrecs = 6;
+pred = [1,1,2,3,4,5];
+succ = [2,3,4,5,6,6];
+
+nUnrels = 4;
+unpred = [2,2,4,4];
+unsucc = [3,5,2,5];
+
+USEFUL_RES = [{},
+	{1,2,3,4},
+	{1,2,3,4},
+	{2,3,4},
+	{1},
+	{}];
+
+POTENTIAL_ACT = [{2,3,5},
+	{2,3,4},
+	{2,3,4},
+	{2,3,4}];
