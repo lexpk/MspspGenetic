@@ -1,56 +1,72 @@
-from mspsp import MspspSolver
+from numpy.core.shape_base import stack
+from geneticMspspSolver import GeneticMspspSolver
+from gene import GraphGene
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 import time
 
+parameters = {
+    'populationSize': 128,
+    'activityMutationPropability': 0.04681012215832443,
+    'resourceMutationPropability': 0.43980729762565596,
+    'ageBiasFactor': 6.75109938384272,
+    'parentalBiasFactor': 9.156206937872355,
+    'parentCount': 3
+}
+
 if __name__ == "__main__":
     benchmark_instances_dir = os.path.join(os.path.dirname(__file__), "..\\benchmark_instances")
+    plot_dir = os.path.join(os.path.dirname(__file__), "..\\plots")
 
-    total = {}
-    average = {}
-    nbenches = len(os.listdir(benchmark_instances_dir))
-    incomplete = {}
-    waittime = 5
+    bestScores = []
+    averages = []
+    standardDeviations = []
+    bestTimes = []
+    averageTimes = []
 
-    problem = {}
+    if not os.path.exists(os.path.join(os.path.dirname(__file__), "..\\images")):
+        os.mkdir(os.path.join(os.path.dirname(__file__), "..\\images"))
 
-    configurations = [
-        ("ortools", ""),
-        ("gecode",  ""),
-        ("chuffed", ""),
-        ("chuffed", ":: int_search(start, input_order, indomain_min)\n\t"),
-        ("chuffed", ":: int_search(start, input_order, indomain_median)\n\t"),
-        ("chuffed", ":: int_search(start, first_fail, indomain_min)\n\t"),
-        ("chuffed", ":: int_search(start, first_fail, indomain_median)\n\t"),
-        ("chuffed", ":: int_search(start, input_order, indomain_random)\n\t"),
-    ]
-    for (solver, annotation) in configurations:
-        total[(solver, annotation)] = 0
-        incomplete[(solver, annotation)] = 0
-        for file in os.listdir(benchmark_instances_dir):
-            f = os.path.join(benchmark_instances_dir, file)
-            print(f"Solving {file} with {solver}, {annotation}...")
-            problem[file] = MspspSolver(f, solvername=solver, search_ann=annotation)
+    for file in os.listdir(benchmark_instances_dir)[:20]:
+        f = os.path.join(benchmark_instances_dir, file)
+        print(f"Solving {file}...")
+        start = time.time()
+        scores = []
+        times = []
+        for i in range(5):
             start = time.time()
-            try:
-                problem[file].solve(timeout=waittime)
-                duration = time.time() - start
-            except:
-                duration = waittime
-            if duration < waittime:
-                total[(solver, annotation)] += duration
-                print(f"Completed in {duration}s")
-            else:
-                print(f"Not completed within {waittime}s")
-                incomplete[(solver, annotation)] += 1
+            solver = GeneticMspspSolver(f,
+                GraphGene,
+                size = parameters['populationSize'],
+                activityMutationPropability = parameters['activityMutationPropability'],
+                resourceMutationPropability = parameters['resourceMutationPropability'],
+                ageBiasFactor=parameters['ageBiasFactor'],
+                parentalBiasFactor=parameters['parentalBiasFactor'],
+                parentCount=parameters['parentCount']
+            )
+            solver.solve()
+            t = time.time() - start
+            scores.append(solver.score)
+            times.append(t)
+            plt.plot(list(range(len(solver.scores))), solver.averages, label="run {number}".format(number = i))
+            print(f"Attempt {i}: {solver.score} in {t}")
+        plt.xlabel('Generation')
+        plt.ylabel('Score')
+        plt.savefig(os.path.join(os.path.dirname(__file__), f"..\\plots\\{file}.png"))
+        plt.clf()
+        print(f"""Best = {max(scores)} in {max(times, key=lambda e: scores[times.index(e)])}, Average = {sum(scores)/5} in {sum(times)/5}, Std = {np.std(scores)}""")
+        bestScores.append(max(scores))
+        bestTimes.append(max(times, key=lambda e: scores[times.index(e)]))
+        averages.append(sum(scores)/5)
+        averageTimes.append(sum(times)/5)
+        standardDeviations.append(np.std(scores))
+        bestTimes
+    print(f"Best Scores: {bestScores}")
+    print(f"Best Times: {bestTimes}")
+    print(f"Averages = {averages}")
+    print(f"Average Times = {averageTimes}")
 
-        average[(solver, annotation)] = total[(solver, annotation)] / nbenches
-        print(
-            f"""
-            Solver:\t {solver}
-            Annotation: {annotation}
-            Completed: {nbenches - incomplete[(solver, annotation)]} / {nbenches}
-            Average: {average[(solver, annotation)]}"""
-        )       
 
 
 
