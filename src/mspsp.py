@@ -1,7 +1,4 @@
 class MspspInstance:
-    """
-    A solver class for MSPSP instances as described in the lecture.
-    """
     def __init__(self, filepath):
         with open(filepath) as f:
             f.readline()
@@ -43,7 +40,7 @@ class MspspInstance:
                             x[index] = entry.split(',')
                             for jndex, fntry in enumerate(x[index]):
                                 x[index][jndex] = int(fntry) - 1
-                if x is not None:
+                if x:
                     exec(f"self.{t[0]} = x")
 
 
