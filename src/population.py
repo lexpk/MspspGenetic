@@ -1,4 +1,3 @@
-from numpy.core.numeric import indices
 from gene import Gene, GraphGene
 import numpy as np
 
@@ -65,7 +64,3 @@ class Population:
             self.bestRecordedScore = self.score
             self.stagnationPeriod = -1
         self.stagnationPeriod += 1
-
-
-
-

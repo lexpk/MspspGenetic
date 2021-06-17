@@ -54,9 +54,3 @@ class GeneticMspspSolver:
         self.score = self.population.max
         self.solution = self.population.bestRecordedIndividual
         return self.solution
-
-def genericTest():
-    e = MspspInstance(exampleFile)
-    p = Population(e, 100, GraphGene)
-    s = GeneticMspspSolver(p, 100, 10)
-    s.solve().show()

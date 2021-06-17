@@ -13,7 +13,7 @@ benchmark_instances_dir = os.path.join(os.path.dirname(__file__), "..\\benchmark
 
 class Objective(object):
         def __init__(self, numberOfInstances = numberOfInstances, timeBias = 0.1):
-            self.benchFiles = sample(os.listdir(benchmark_instances_dir)[:20], k=numberOfInstances)
+            self.benchFiles = sample(os.listdir(benchmark_instances_dir), k=numberOfInstances)
             self.timeBias = timeBias
             nl = '\n'
             print(
@@ -62,7 +62,3 @@ if __name__ == "__main__":
     fig.write_image(os.path.join(os.path.dirname(__file__), "..\\images\\parallel_coordinate.png"))
     fig = optuna.visualization.plot_slice(study)
     fig.write_image(os.path.join(os.path.dirname(__file__), "..\\images\\sclices.png"))
-
-
-
-

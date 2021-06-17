@@ -66,7 +66,3 @@ if __name__ == "__main__":
     print(f"Best Times: {bestTimes}")
     print(f"Averages = {averages}")
     print(f"Average Times = {averageTimes}")
-
-
-
-

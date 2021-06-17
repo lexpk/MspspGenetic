@@ -42,8 +42,6 @@ class Gene(ABC):
         self.toMspspSolution().show() 
 
 class NaiveGene(Gene):
-    mutationFactor = 100
-
     def __init__(
             self, 
             instance : MspspInstance, 
@@ -402,8 +400,3 @@ class GraphGene(Gene):
                 shape = (i, instance.nResources)
             ))
         return instance, precedenceGraph, resourceGraph
-
-
-
-
-
